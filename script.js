@@ -105,8 +105,5 @@ function getRandomColor() {
 function resetGame() {
     time = 0;
     score = 0;
-    screens.forEach((screen) => {
-        screen.classList.remove('up');
-    });
     location.reload();
 }
