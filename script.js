@@ -15,6 +15,7 @@ const colors = [
 
 let time = 0;
 let score = 0;
+let isFinished = false;
 
 startButton.addEventListener('click', (event) => {
     event.preventDefault();
@@ -38,37 +39,36 @@ board.addEventListener('click', (event) => {
 });
 
 function startGame() {
-    setInterval(decreaseTime, 1000);
+    timeInterval();
     createRandomCircle();
     setTime(time);
-}
-
-function decreaseTime() {
-    if (!time) {
-        finishGame();
-    } else {
-        let current = --time;
-        if (current < 10) {
-            current = `0${current}`;
-        }
-        setTime(current);
-    }
-}
-
-function setTime(value) {
-    timer.innerHTML = `00:${value}`;
 }
 
 function finishGame() {
     timer.parentNode.classList.add('hide');
     board.innerHTML = `
-    <button class="reset-btn">Начать заново</button>
-    <h1>Cчет: <span class="primary">${score}</span></h1>
+        <button class="reset-btn">Начать заново</button>
+        <h1 class="header">Cчет: <span class="primary">${score}</span></h1>
     `;
 
     const resetButton = document.querySelector('.reset-btn');
+    const header = document.querySelector('.header');
 
-    resetButton.addEventListener('click', () => resetGame());
+    resetButton.addEventListener('click', () => {
+        resetButton.remove();
+        header.remove();
+        timer.parentNode.classList.remove('hide');
+        resetGame();
+    });
+}
+
+function resetGame() {
+    isFinished = false;
+    time = 0;
+    score = 0;
+    screens.forEach((screen) => {
+        screen.classList.remove('up');
+    });
 }
 
 function createRandomCircle() {
@@ -88,6 +88,10 @@ function createRandomCircle() {
     board.append(circle);
 }
 
+function setTime(value) {
+    timer.innerHTML = `00:${value}`;
+}
+
 function getRandomNumber(min, max) {
     return Math.round(Math.random() * (max - min) + min);
 }
@@ -102,8 +106,18 @@ function getRandomColor() {
     return colors[index];
 }
 
-function resetGame() {
-    time = 0;
-    score = 0;
-    location.reload();
+function timeInterval() {
+    let timeInterval = setInterval(() => {
+        if (!time) {
+            isFinished = true;
+            finishGame();
+            clearInterval(timeInterval);
+        } else {
+            let current = --time;
+            if (current < 10) {
+                current = `0${current}`;
+            }
+            setTime(current);
+        }
+    }, 1000);
 }
