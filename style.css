@@ -45,9 +45,6 @@ h1 {
 .screen.up {
     margin-top: -100vh;
 }
-.screen.down {
-    margin-top: -50vh;
-}
 
 .time-list {
     display: flex;
